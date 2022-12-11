@@ -41,7 +41,7 @@ class Student:
         self.frame2=Frame(self.root,bg="white")
         self.frame2.place(x=620,y=20,height=200,width=350)
         #Frame3=================
-        self.frame3=Frame(self.root,bg="white")
+        self.frame3=Frame(self.root,bg="white",relief=RIDGE)
         self.frame3.place(x=10,y=230,height=250,width=960)
 
         #Frame1 content======
@@ -70,7 +70,39 @@ class Student:
         #buttons under frame1====================
         self.btn1=Button(self.frame1,text="Add",justify=CENTER,command=self.batches_add).grid(row=2,column=3,)
         self.btn2=Button(self.frame1,text="Delete",justify=CENTER,command=lambda: self.listbox.delete(ANCHOR)).grid(row=2,column=4,)
+        self.btn1_crud=Button(self.frame1,text="Add",justify=CENTER,font=("Comic Sans MS", 10, "bold")).place(x=408,y=165)
+        self.btn2_crud=Button(self.frame1,text="Update",justify=CENTER,font=("Comic Sans MS", 10, "bold")).place(x=445,y=165)
+        self.btn3_crud=Button(self.frame1,text="Delete",justify=CENTER,font=("Comic Sans MS", 10, "bold")).place(x=503,y=165)
+        self.btn4_crud=Button(self.frame1,text="Clear",justify=CENTER,font=("Comic Sans MS", 10, "bold")).place(x=555,y=165)
 
+    #==================Treeview=============================
+        scroll_x=ttk.Scrollbar(self.frame3,orient=HORIZONTAL)
+        scroll_y = ttk.Scrollbar(self.frame3, orient=VERTICAL)
+        self.style=ttk.Style()
+        self.style.theme_use("clam")
+        self.style.configure("Treeview",background="grey71",foreground="black",rowheight=25,fieldbackground="grey71")
+        self.style.map("Treeview",background=[("selected","green")])
+        self.Depart_Table=ttk.Treeview(self.frame3,columns=("Department ID","Department Name","List of Batches"),xscrollcommand=scroll_x.set,yscrollcommand=scroll_y.set)
+
+
+        
+        scroll_x.pack(side=BOTTOM,fill=X)
+        scroll_y.pack(side=RIGHT,fill=Y)
+        scroll_x.config(command=self.Depart_Table.xview)
+        scroll_y.config(command=self.Depart_Table.yview)
+
+        self.Depart_Table.heading("Department ID",text="Department ID")
+        self.Depart_Table.heading("Department Name", text="Department Name")
+        self.Depart_Table.heading("List of Batches", text="List of Batches")
+
+        self.Depart_Table["show"]="headings"
+        self.Depart_Table.column("Department ID",width=10)
+        self.Depart_Table.column("Department Name", width=10)
+        self.Depart_Table.column("List of Batches", width=10)
+        self.Depart_Table.pack(fill=BOTH,expand=1)
+
+
+        self.Depart_Table["displaycolumns"]=("Department ID","Department Name","List of Batches")
     def batches_add(self):
         if self.batches_add_txt_var.get() not in self.my_list:
             self.my_list.append(self.batches_add_txt_var.get())
