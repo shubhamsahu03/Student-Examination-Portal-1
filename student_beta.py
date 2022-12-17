@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import ttk,messagebox
+from PIL import Image,ImageTk
 
 
 
@@ -20,7 +21,6 @@ class Student:
         self.root.resizable(False,False)
         #====Menu===========
         
-
         self.mymenu=Menu(self.root)
         self.mymenu.add_command(label="Student")
         self.mymenu.add_command(label="Course")
@@ -53,6 +53,8 @@ class Student:
         self.depart_id_txt_var=StringVar()
         self.depart_name_txt_var=StringVar()
         self.batches_add_txt_var=StringVar()
+        self.avg_batchesvar=StringVar()
+        self.txt_search=StringVar()
 
         
         
@@ -75,6 +77,18 @@ class Student:
         self.btn3_crud=Button(self.frame1,text="Delete",justify=CENTER,font=("Comic Sans MS", 10, "bold")).place(x=503,y=165)
         self.btn4_crud=Button(self.frame1,text="Clear",justify=CENTER,font=("Comic Sans MS", 10, "bold")).place(x=555,y=165)
 
+    #===Content under frame2======================
+        self.search_image = ImageTk.PhotoImage(ImageTk.Image.open("pictures_1/search_icon_2.jpg").resize((40, 40), ImageTk.Image.ANTIALIAS))
+
+
+        self.average_batches=Label(self.frame2,textvariable=self.avg_batchesvar,background="white",font=("times new roman",10,"bold"),text="hello").grid(row=1,column=1,columnspan=2)
+        self.avg_batchesvar.set("Average Performance of Batches: {}".format(str(69)+"%"))
+        self.plot_graph_btn=Button(self.frame2,text="Plot Graph",activeforeground="green").grid(row=2,column=2,ipadx=20,pady=20,padx=10)
+        self.entry_search=Entry(self.frame2,textvariable=self.txt_search,relief=GROOVE,bg="white",borderwidth=1,font=("times new roman",17,"bold"),bd=3).grid(row=3 ,column=2)
+        self.btn_search=Button(self.frame2,image=self.search_image,borderwidth=1,relief=GROOVE,bg="white")
+        self.btn_search.place(x=0,y=125)
+        self.show_allbtn = Button(self.frame2, text="Show All", width=10,height=2, pady=3, bg="OrangeRed3",
+                           font=("times new roman", 10, "bold")).place(x=50, y=125)
     #==================Treeview=============================
         scroll_x=ttk.Scrollbar(self.frame3,orient=HORIZONTAL)
         scroll_y = ttk.Scrollbar(self.frame3, orient=VERTICAL)
