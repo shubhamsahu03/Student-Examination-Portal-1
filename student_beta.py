@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import ttk,messagebox
 from PIL import Image,ImageTk
+import pandas as pd
 
 
 
@@ -87,8 +88,7 @@ class Student:
         self.entry_search=Entry(self.frame2,textvariable=self.txt_search,relief=GROOVE,bg="white",borderwidth=1,font=("times new roman",17,"bold"),bd=3).grid(row=3 ,column=2)
         self.btn_search=Button(self.frame2,image=self.search_image,borderwidth=1,relief=GROOVE,bg="white")
         self.btn_search.place(x=0,y=125)
-        self.show_allbtn = Button(self.frame2, text="Show All", width=10,height=2, pady=3, bg="OrangeRed3",
-                           font=("times new roman", 10, "bold")).place(x=50, y=125)
+        self.show_allbtn = Button(self.frame2, text="Show All", width=10,height=2, pady=3, bg="OrangeRed3",font=("times new roman", 10, "bold")).place(x=50, y=125)
     #==================Treeview=============================
         scroll_x=ttk.Scrollbar(self.frame3,orient=HORIZONTAL)
         scroll_y = ttk.Scrollbar(self.frame3, orient=VERTICAL)
@@ -125,6 +125,20 @@ class Student:
         else:
             self.batches_add_txt_var.set("")
     
+    def crud_add(self):
+        if self.depart_name_txt_var.get()=="" or self.depart_id_txt_var.get()=="" or self.my_list==[]:
+            messagebox.showerror("Error","Entry bars should not be empty",parent=self.root)
+        else:
+            try:
+                excel_filename=r"department.csv"
+                if excel_filename[-4:]==".csv":
+                    self.df=pd.read_csv(excel_filename)
+                else:
+                    self.df = pd.read_excel(excel_filename)
+                data={self.df[0]:[self.depart_id_txt_var.get()],self.df[1]:[self.depart_name_txt_var.get()],self.df[2]:[self.my_list]}
+                
+            except Exception as es:
+                messagebox.showerror("Error", f"Error due to: {str(es)}",parent=self.root)        
 
 
 
