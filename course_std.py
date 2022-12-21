@@ -55,8 +55,8 @@ class Course:
             self.style.theme_use("clam")
             self.style.configure("Treeview",background="grey71",foreground="black",rowheight=25,fieldbackground="grey71")
             self.style.map("Treeview",background=[("selected","green")])
-            batches_headings=pd.read_csv("csv_files\courses.csv")
-            self.Course_Table=ttk.Treeview(self.frame2,columns=list(batches_headings.columns),xscrollcommand=scroll_x.set,yscrollcommand=scroll_y.set)
+            course_headings=pd.read_csv("csv_files\courses.csv")
+            self.Course_Table=ttk.Treeview(self.frame2,columns=list(course_headings.columns),xscrollcommand=scroll_x.set,yscrollcommand=scroll_y.set)
             scroll_x.pack(side=BOTTOM,fill=X)
             scroll_y.pack(side=RIGHT,fill=Y)
             scroll_x.config(command=self.Course_Table.xview)
@@ -69,7 +69,7 @@ class Course:
             for i in self.Course_Table["columns"]:
                 self.Course_Table.column(i,width=10)
             self.Course_Table.pack(fill=BOTH,expand=1)
-            self.Course_Table["displaycolumns"]=list(batches_headings.columns)  
+            self.Course_Table["displaycolumns"]=list(course_headings.columns)  
 
 if __name__=="__main__":
     main()    
