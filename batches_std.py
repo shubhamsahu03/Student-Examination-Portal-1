@@ -61,30 +61,23 @@ class Batches:
         self.style.theme_use("clam")
         self.style.configure("Treeview",background="grey71",foreground="black",rowheight=25,fieldbackground="grey71")
         self.style.map("Treeview",background=[("selected","green")])
-
-        self.Batch_Table=ttk.Treeview(self.frame2,columns=("Batch ID","Batch Name","Department Name","List of Courses","List of Students"),xscrollcommand=scroll_x.set,yscrollcommand=scroll_y.set)
-
+         
+        batches_headings=pd.read_csv("csv_files\Batches.csv")
+        self.Batch_Table=ttk.Treeview(self.frame2,columns=list(batches_headings.columns),xscrollcommand=scroll_x.set,yscrollcommand=scroll_y.set)
         scroll_x.pack(side=BOTTOM,fill=X)
         scroll_y.pack(side=RIGHT,fill=Y)
         scroll_x.config(command=self.Batch_Table.xview)
         scroll_y.config(command=self.Batch_Table.yview)
 
-        self.Batch_Table.heading("Batch ID",text="Department ID")
-        self.Batch_Table.heading("Batch Name", text="Department Name")
-        self.Batch_Table.heading("Department Name", text="List of Batches")
-        self.Batch_Table.heading("List of Courses", text="List of Batches")
-        self.Batch_Table.heading("List of Students", text="List of Batches")
+        for i in self.Batch_Table["columns"]:
+                self.Batch_Table.heading(i,text=i)
 
         self.Batch_Table["show"]="headings"
-        self.Batch_Table.column("Batch ID",width=10)
-        self.Batch_Table.column("Batch Name", width=10)
-        self.Batch_Table.column("Department Name", width=10)
-        self.Batch_Table.column("List of Courses", width=10)
-        self.Batch_Table.column("List of Students", width=10)
-
+        for i in self.Batch_Table["columns"]:
+                self.Batch_Table.column(i,width=10)
         self.Batch_Table.pack(fill=BOTH,expand=1)
+        self.Batch_Table["displaycolumns"]=list(batches_headings.columns)  
 
-
-        self.Batch_Table["displaycolumns"]=("Batch ID","Batch Name","Department Name","List of Courses","List of Students")
+        
 if __name__=="__main__":
     main()               
