@@ -1,6 +1,7 @@
 from tkinter import *
 import pandas as pd
 from tkinter import ttk,messagebox
+from PIL import Image,ImageTk
 
 def main():
     root=Tk()
@@ -23,6 +24,27 @@ class Student:
         self.frame1.place(x=10,y=20,height=200,width=960)
         self.frame2=Frame(self.root,bg="white",relief=RIDGE)
         self.frame2.place(x=10,y=230,height=250,width=960) 
+
+    #=====Content Under frame1============
+        self.lbl_id=Label(self.frame1,text="Student ID",bg="white",font=("times new roman",10,"bold")).grid(row=0,column=0)
+        self.lbl_name=Label(self.frame1,text="Student Name",bg="white",font=("times new roman",10,"bold")).grid(row=1,column=0)
+        self.lbl_roll=Label(self.frame1,text="Class Roll Number",bg="white",font=("times new roman",10,"bold")).grid(row=2,column=0)
+        self.lbl_marks_obtained=Label(self.frame1,text="Batch ID",bg="white",font=("times new roman",10,"bold")).grid(row=3,column=0)
+        self.entry_id=Entry(self.frame1,state="readonly",font=("times new roman",15,"bold"),bg="azure2").grid(row=0,column=1,padx=5,pady=5)    
+        self.entry_name=Entry(self.frame1,font=("times new roman",15,"bold"),bg="azure2").grid(row=1,column=1,padx=5,pady=5)    
+        self.entry_roll=Entry(self.frame1,font=("times new roman",15,"bold"),bg="azure2").grid(row=2,column=1,padx=5,pady=5)    
+        self.combo_batch_id=ttk.Combobox(self.frame1,font=("times new roman",15,"bold"),state="readonly",justify=RIGHT).grid(row=3,column=1,padx=2,pady=2)
+        self.btn1_crud=Button(self.frame1,text="Add",font=("Comic Sans MS", 10, "bold"),activebackground="green",activeforeground="white",fg="black").place(x=20,y=150)
+        self.btn2_crud=Button(self.frame1,text="Update",font=("Comic Sans MS", 10, "bold"),activebackground="green",activeforeground="white",fg="black").place(x=60,y=150)
+        self.btn3_crud=Button(self.frame1,text="Delete",font=("Comic Sans MS", 10, "bold"),activebackground="green",activeforeground="white",fg="black").place(x=120,y=150)
+        self.btn4_crud=Button(self.frame1,text="Clear",font=("Comic Sans MS", 10, "bold"),activebackground="green",activeforeground="white",fg="black").place(x=175,y=150)
+
+        self.search_image = ImageTk.PhotoImage(ImageTk.Image.open("pictures_1/search_icon_2.jpg").resize((40, 40), ImageTk.Image.ANTIALIAS))
+        self.search_entry=Entry(self.frame1,font=("times new roman",15,"bold"),bg="azure2").place(x=350,y=150)
+        self.btn_search=Button(self.frame1,image=self.search_image,height=23,borderwidth=1,relief=GROOVE,bg="white")
+        self.btn_search.place(x=550,y=150)
+        self.show_allbtn = Button(self.frame1, text="Show All", width=10,height=0, pady=1, bg="OrangeRed3",font=("times new roman", 10, "bold")).place(x=590, y=150)
+        self.generate_btn=Button(self.frame1,text="Generate Text File",font=("times new roman", 10, "bold"),justify=CENTER,bg="red",activebackground="yellow",activeforeground="blue").place(x=350,y=100)
 
     #============Treeview==================
         scroll_x=ttk.Scrollbar(self.frame2,orient=HORIZONTAL)

@@ -96,7 +96,9 @@ class Student:
         self.style.theme_use("clam")
         self.style.configure("Treeview",background="grey71",foreground="black",rowheight=25,fieldbackground="grey71")
         self.style.map("Treeview",background=[("selected","green")])
-        self.Depart_Table=ttk.Treeview(self.frame3,columns=("Department ID","Department Name","List of Batches"),xscrollcommand=scroll_x.set,yscrollcommand=scroll_y.set)
+        department_headings=pd.read_csv("csv_files\department.csv")
+
+        self.Depart_Table=ttk.Treeview(self.frame3,columns=list(department_headings.columns),xscrollcommand=scroll_x.set,yscrollcommand=scroll_y.set)
 
 
         
@@ -105,18 +107,18 @@ class Student:
         scroll_x.config(command=self.Depart_Table.xview)
         scroll_y.config(command=self.Depart_Table.yview)
 
-        self.Depart_Table.heading("Department ID",text="Department ID")
-        self.Depart_Table.heading("Department Name", text="Department Name")
-        self.Depart_Table.heading("List of Batches", text="List of Batches")
+       
+        for i in self.Depart_Table["columns"]:
+                self.Depart_Table.heading(i,text=i)
 
         self.Depart_Table["show"]="headings"
-        self.Depart_Table.column("Department ID",width=10)
-        self.Depart_Table.column("Department Name", width=10)
-        self.Depart_Table.column("List of Batches", width=10)
+        for i in self.Depart_Table["columns"]:
+                self.Depart_Table.column(i,width=10)
         self.Depart_Table.pack(fill=BOTH,expand=1)
+        self.Depart_Table["displaycolumns"]=list(department_headings.columns)
 
 
-        self.Depart_Table["displaycolumns"]=("Department ID","Department Name","List of Batches")
+        
     def batches_add(self):
         if self.batches_add_txt_var.get() not in self.my_list:
             self.my_list.append(self.batches_add_txt_var.get())
