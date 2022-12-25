@@ -43,11 +43,11 @@ class Batches:
         self.text_std=Text(self.frame1,height=10,width=45,bg="yellow").place(x=400,y=10)
         
         self.btn_pie=Button(self.frame1,text="Plot Piechart",justify=CENTER).place(x=800,y=10)
-        self.btn1_crud=Button(self.frame3,text="Add",font=("Comic Sans MS", 10, "bold"),activebackground="green",activeforeground="white").pack(side=TOP,)
-        self.btn2_crud=Button(self.frame3,text="Update",font=("Comic Sans MS", 10, "bold"),activebackground="green",activeforeground="white").pack(side=LEFT)
-        self.btn3_crud=Button(self.frame3,text="Delete",font=("Comic Sans MS", 10, "bold"),activebackground="green",activeforeground="white").pack(side=RIGHT)
-        self.btn4_crud=Button(self.frame3,text="Clear",font=("Comic Sans MS", 10, "bold"),activebackground="green",activeforeground="white").pack(side=BOTTOM)
-
+        self.btn1_crud=Button(self.frame3,text="Add",font=("Comic Sans MS", 10, "bold"),activebackground="green",activeforeground="white",relief=RIDGE,bd=2).pack(side=TOP,fill=X)
+        self.btn2_crud=Button(self.frame3,text="Update",font=("Comic Sans MS", 10, "bold"),activebackground="green",activeforeground="white",relief=RIDGE,bd=2).pack(side=LEFT)
+        self.btn3_crud=Button(self.frame3,text="Delete",font=("Comic Sans MS", 10, "bold"),activebackground="green",activeforeground="white",relief=RIDGE,bd=2).pack(side=RIGHT)
+        self.btn4_crud=Button(self.frame3,text="Clear",font=("Comic Sans MS", 10, "bold"),activebackground="green",activeforeground="white",relief=RIDGE,bd=2).pack(side=BOTTOM)
+        self.lbl_search_by=Label(self.frame1,text="Search By BatchID",font=("Comic Sans MS", 10, "bold"),bg="white").place(x=800,y=125)
         self.search_image = ImageTk.PhotoImage(ImageTk.Image.open("pictures_1/search_icon_2.jpg").resize((40, 40), ImageTk.Image.ANTIALIAS))
         self.search_entry=Entry(self.frame1,font=("times new roman",10,"bold"),bg="azure2").place(x=800,y=150)
         self.btn_search=Button(self.frame1,image=self.search_image,height=23,borderwidth=1,relief=GROOVE,bg="white")
