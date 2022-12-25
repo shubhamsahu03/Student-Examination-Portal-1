@@ -16,7 +16,7 @@ class Batches:
         screen_height=self.root.winfo_screenheight()
         x=(screen_width/2)-(1000/2)
         y=(screen_height/2)-(500/2)
-        self.root.geometry("1000x500+{}+{}".format(int(x),int(y)))
+        self.root.geometry("1000x500+{}+{}".format(int(x)+100,int(y)))
         self.root.resizable(False,False)
 
     #========frames====================
