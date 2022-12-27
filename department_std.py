@@ -2,6 +2,8 @@ from tkinter import *
 from tkinter import ttk, messagebox, Toplevel
 from PIL import Image, ImageTk
 import pandas as pd
+import csv
+import ast
 
 
 def main():
@@ -94,10 +96,10 @@ class Department:
         self.entry_search = Entry(self.frame2, textvariable=self.txt_search, relief=GROOVE, bg="white", borderwidth=1, font=(
             "times new roman", 17, "bold"), bd=3).grid(row=3, column=2)
         self.btn_search = Button(
-            self.frame2, image=self.search_image, borderwidth=1, relief=GROOVE, bg="white")
+            self.frame2, image=self.search_image, borderwidth=1, relief=GROOVE, bg="white",command=self.search_data)
         self.btn_search.place(x=0, y=125)
         self.show_allbtn = Button(self.frame2, text="Show All", width=10, height=2, pady=3, bg="OrangeRed3", font=(
-            "times new roman", 10, "bold")).place(x=50, y=125)
+            "times new roman", 10, "bold"),command=self.fetch_data).place(x=50, y=125)
     # ==================Treeview=============================
         scroll_x = ttk.Scrollbar(self.frame3, orient=HORIZONTAL)
         scroll_y = ttk.Scrollbar(self.frame3, orient=VERTICAL)
@@ -125,6 +127,8 @@ class Department:
         self.Depart_Table.pack(fill=BOTH, expand=1)
         self.Depart_Table["displaycolumns"] = list(
             self.department_headings.columns)
+        self.Depart_Table.bind("<ButtonRelease-1>",self.get_cursor)    
+        self.fetch_data()    
         self.depart_id_txt_var.trace("w", self.upd)
 
         # ==================Toplevel_windows=====================
@@ -136,6 +140,7 @@ class Department:
             if self.batches_add_txt_var.get() not in self.listbox.get(0, END):
 
                 self.listbox.insert(END, self.batches_add_txt_var.get())
+                print(self.listbox.get(0,END),type(self.listbox.get(0,END)))
                 self.batches_add_txt_var.set("")
             else:
                 self.batches_add_txt_var.set("")
@@ -160,7 +165,9 @@ class Department:
                     self.df[self.department_headings.columns[0]] == self.depart_id_txt_var.get())], axis=0, inplace=True)
 
                 self.df.to_csv(excel_filename, index=False)
+
                 self.clear_crud()
+                self.fetch_data()
             except Exception as es:
                 messagebox.showerror(
                     "Error", f"Error due to: {str(es)}", parent=self.root)
@@ -174,15 +181,62 @@ class Department:
             try:
                 excel_filename = r"csv_files\department.csv"
                 self.df = pd.read_csv(excel_filename)
-                df_update=self.df.loc[self.df[self.department_headings.columns[0]]==self.depart_id_txt_var.get()]
-                df_update[self.department_headings.columns[1]]=self.depart_name_txt_var.get()
-                self.df.to_csv(excel_filename, index=False)
-                self.clear_crud
+                for i in self.df.index:
+                    if self.df.loc[i, self.department_headings.columns[0]] == self.depart_id_txt_var.get():
+                        self.df.loc[i, self.department_headings.columns[1]
+                                    ] = self.depart_name_txt_var.get()
+                        self.df.to_csv(excel_filename, index=False)
+                        self.clear_crud()
+                        self.fetch_data()
 
             except Exception as es:
                 messagebox.showerror(
                     "Error", f"Error due to: {str(es)}", parent=self.root)
+    def fetch_data(self):
+        excel_filename = r"csv_files\department.csv"
+        if excel_filename:
+            try:
+                df=pd.read_csv(excel_filename)
 
+            except Exception as es:
+                messagebox.showerror(
+                        "Error", f"Error due to: {str(es)}", parent=self.root)
+        self.Depart_Table.delete(*self.Depart_Table.get_children())
+        
+        df_rows=df.to_numpy().tolist()
+        for row in df_rows:
+            self.Depart_Table.insert("",END,values=row) 
+    def get_cursor(self,ev):
+        cursor_row=self.Depart_Table.focus()
+        content=self.Depart_Table.item(cursor_row)
+        self.Entry_fill=content["values"]
+        self.depart_id_txt_var.set(self.Entry_fill[0])
+        self.depart_name_txt_var.set(self.Entry_fill[1])
+        self.listbox.delete(0, END)
+
+        
+        a=ast.literal_eval(self.Entry_fill[2])
+        for i in a:
+            self.listbox.insert(END,i)
+        
+        #for i in range(len(list(self.Entry_fill[2]))):
+        #    self.listbox.insert(END,) 
+    def search_data(self):
+        if  self.txt_search.get()=="":
+            messagebox.showerror("Error","Entry box shouldn't be empty.",parent=self.root)
+        else:
+            try:
+                df_filtered=self.department_headings.loc[self.department_headings[self.department_headings.columns[0]]==self.txt_search.get()]
+                """if df_filtered==None:
+                    messagebox.showerror("Error","Not Found.",parent=self.root)
+                else:"""
+                df_rows=df_filtered.to_numpy().tolist()
+                self.Depart_Table.delete(*self.Depart_Table.get_children())
+                for i in df_rows:
+                    self.Depart_Table.insert("",END,values=(i[0],i[1],i[2])) 
+            except Exception as es:
+                    messagebox.showerror(
+                        "Error", f"Error due to: {str(es)}", parent=self.root)        
     def crud_add(self):
 
         if self.depart_name_txt_var.get() == "" or self.depart_id_txt_var.get() == "" or list(self.listbox.get(0, END)) == []:
@@ -202,6 +256,7 @@ class Department:
                         self.df.to_csv(excel_filename, mode='a',
                                        index=False, header=False)
                         self.clear_crud()
+                        self.fetch_data()
                     else:
                         messagebox.showerror(
                             "Error", "Department ID should be unique.", parent=self.root)
