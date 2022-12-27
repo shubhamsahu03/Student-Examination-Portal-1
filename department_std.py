@@ -4,9 +4,6 @@ from PIL import Image, ImageTk
 import pandas as pd
 
 
-
-
-
 def main():
     root = Tk()
 
@@ -48,6 +45,7 @@ class Department:
             "times new roman", 10, "bold"), bg="white").grid(row=1, column=0, padx=5, pady=5)
         self.batches_under = Label(self.frame1, text="List Of Batches", font=(
             "times new roman", 10, "bold"), bg="white").grid(row=2, column=0, padx=5, pady=5)
+
         # self.scrollbar=Scrollbar(self.frame1,orient=VERTICAL)
         # =====All variables==========
         self.depart_id_txt_var = StringVar()
@@ -56,11 +54,10 @@ class Department:
         self.avg_batchesvar = StringVar()
         self.txt_search = StringVar()
 
-        self.my_list = []
         self.depart_id_txt = Entry(self.frame1, font=(
-            "times new roman", 15, "bold"), bg="azure2").grid(row=0, column=1, padx=5, pady=5)
+            "times new roman", 15, "bold"), bg="azure2", textvariable=self.depart_id_txt_var).grid(row=0, column=1, padx=5, pady=5)
         self.depart_name_txt = Entry(self.frame1, font=(
-            "times new roman", 15, "bold"), bg="azure2").grid(row=1, column=1, padx=5, pady=5)
+            "times new roman", 15, "bold"), bg="azure2", textvariable=self.depart_name_txt_var).grid(row=1, column=1, padx=5, pady=5)
         self.batches_add_txt = Entry(self.frame1, font=(
             "times new roman", 15, "bold"), bg="azure2", textvariable=self.batches_add_txt_var).place(x=120, y=165)
 
@@ -76,14 +73,14 @@ class Department:
         self.btn2 = Button(self.frame1, text="Delete", justify=CENTER,
                            command=lambda: self.listbox.delete(ANCHOR)).grid(row=2, column=4,)
         self.btn1_crud = Button(self.frame1, text="Add", justify=CENTER, font=(
-            "Comic Sans MS", 10, "bold")).place(x=408, y=165)
+            "Comic Sans MS", 10, "bold"), command=self.crud_add).place(x=408, y=165)
         self.btn2_crud = Button(self.frame1, text="Update", justify=CENTER, font=(
-            "Comic Sans MS", 10, "bold")).place(x=445, y=165)
+            "Comic Sans MS", 10, "bold"), command=self.update_crud).place(x=445, y=165)
         self.btn3_crud = Button(self.frame1, text="Delete", justify=CENTER, font=(
-            "Comic Sans MS", 10, "bold")).place(x=503, y=165)
+            "Comic Sans MS", 10, "bold"), command=self.crud_delete).place(x=503, y=165)
         self.btn4_crud = Button(self.frame1, text="Clear", justify=CENTER, font=(
-            "Comic Sans MS", 10, "bold")).place(x=555, y=165)
-
+            "Comic Sans MS", 10, "bold"), command=self.clear_crud).place(x=555, y=165)
+        self
     # ===Content under frame2======================
         self.search_image = ImageTk.PhotoImage(ImageTk.Image.open(
             "pictures_1/search_icon_2.jpg").resize((40, 40), ImageTk.Image.ANTIALIAS))
@@ -109,10 +106,10 @@ class Department:
         self.style.configure("Treeview", background="grey71",
                              foreground="black", rowheight=25, fieldbackground="grey71")
         self.style.map("Treeview", background=[("selected", "green")])
-        department_headings = pd.read_csv("csv_files\department.csv")
+        self.department_headings = pd.read_csv("csv_files\department.csv")
 
         self.Depart_Table = ttk.Treeview(self.frame3, columns=list(
-            department_headings.columns), xscrollcommand=scroll_x.set, yscrollcommand=scroll_y.set)
+            self.department_headings.columns), xscrollcommand=scroll_x.set, yscrollcommand=scroll_y.set)
 
         scroll_x.pack(side=BOTTOM, fill=X)
         scroll_y.pack(side=RIGHT, fill=Y)
@@ -126,34 +123,95 @@ class Department:
         for i in self.Depart_Table["columns"]:
             self.Depart_Table.column(i, width=10)
         self.Depart_Table.pack(fill=BOTH, expand=1)
-        self.Depart_Table["displaycolumns"] = list(department_headings.columns)
+        self.Depart_Table["displaycolumns"] = list(
+            self.department_headings.columns)
+        self.depart_id_txt_var.trace("w", self.upd)
+
         # ==================Toplevel_windows=====================
+    def upd(self, *args):
+        self.batches_add_txt_var.set(self.depart_id_txt_var.get())
 
     def batches_add(self):
-        if self.batches_add_txt_var.get() not in self.my_list:
-            self.my_list.append(self.batches_add_txt_var.get())
-            self.listbox.insert(END, self.batches_add_txt_var.get())
-            self.batches_add_txt_var.set("")
-        else:
-            self.batches_add_txt_var.set("")
+        if self.batches_add_txt_var.get() != "":
+            if self.batches_add_txt_var.get() not in self.listbox.get(0, END):
 
-    def crud_add(self):
-        if self.depart_name_txt_var.get() == "" or self.depart_id_txt_var.get() == "" or self.my_list == []:
+                self.listbox.insert(END, self.batches_add_txt_var.get())
+                self.batches_add_txt_var.set("")
+            else:
+                self.batches_add_txt_var.set("")
+
+    def clear_crud(self):
+        self.depart_id_txt_var.set("")
+        self.depart_name_txt_var.set("")
+        self.batches_add_txt_var.set("")
+        self.listbox.delete(0, END)
+
+    def crud_delete(self):
+        if self.depart_name_txt_var.get() == "" or self.depart_id_txt_var.get() == "" or list(self.listbox.get(0, END)) == []:
+
             messagebox.showerror(
                 "Error", "Entry bars should not be empty", parent=self.root)
         else:
             try:
-                excel_filename = r"department.csv"
-                if excel_filename[-4:] == ".csv":
-                    self.df = pd.read_csv(excel_filename)
-                else:
-                    self.df = pd.read_excel(excel_filename)
-                data = {self.df[0]: [self.depart_id_txt_var.get()], self.df[1]: [
-                    self.depart_name_txt_var.get()], self.df[2]: [self.my_list]}
+                excel_filename = r"csv_files\department.csv"
+                self.df = pd.read_csv(excel_filename)
+
+                self.df.drop(self.df.index[(
+                    self.df[self.department_headings.columns[0]] == self.depart_id_txt_var.get())], axis=0, inplace=True)
+
+                self.df.to_csv(excel_filename, index=False)
+                self.clear_crud()
+            except Exception as es:
+                messagebox.showerror(
+                    "Error", f"Error due to: {str(es)}", parent=self.root)
+
+    def update_crud(self):
+        if self.depart_name_txt_var.get() == "" or self.depart_id_txt_var.get() == "" or list(self.listbox.get(0, END)) == []:
+
+            messagebox.showerror(
+                "Error", "Entry bars should not be empty", parent=self.root)
+        else:
+            try:
+                excel_filename = r"csv_files\department.csv"
+                self.df = pd.read_csv(excel_filename)
+                df_update=self.df.loc[self.df[self.department_headings.columns[0]]==self.depart_id_txt_var.get()]
+                df_update[self.department_headings.columns[1]]=self.depart_name_txt_var.get()
+                self.df.to_csv(excel_filename, index=False)
+                self.clear_crud
 
             except Exception as es:
                 messagebox.showerror(
                     "Error", f"Error due to: {str(es)}", parent=self.root)
+
+    def crud_add(self):
+
+        if self.depart_name_txt_var.get() == "" or self.depart_id_txt_var.get() == "" or list(self.listbox.get(0, END)) == []:
+
+            messagebox.showerror(
+                "Error", "Entry bars should not be empty", parent=self.root)
+        else:
+            if self.depart_id_txt_var.get().isupper():
+                try:
+                    excel_filename = r"csv_files\department.csv"
+                    df = pd.read_csv(excel_filename)
+                    if self.depart_id_txt_var.get() not in list(df.loc[:, self.department_headings.columns[0]]):
+                        data = {self.department_headings.columns[0]: [self.depart_id_txt_var.get()], self.department_headings.columns[1]: [
+                            self.depart_name_txt_var.get()], self.department_headings.columns[2]: [list(self.listbox.get(0, END))]}
+
+                        self.df = pd.DataFrame(data)
+                        self.df.to_csv(excel_filename, mode='a',
+                                       index=False, header=False)
+                        self.clear_crud()
+                    else:
+                        messagebox.showerror(
+                            "Error", "Department ID should be unique.", parent=self.root)
+                except Exception as es:
+                    messagebox.showerror(
+                        "Error", f"Error due to: {str(es)}", parent=self.root)
+
+            else:
+                messagebox.showinfo(
+                    "Reminder", "write Department ID in Caps", parent=self.root)
 
 
 if __name__ == "__main__":
