@@ -209,14 +209,14 @@ class Student:
                 "Error", "Entry box shouldn't be empty.", parent=self.root)
         else:
             try:
-                df_filtered = self.student_headings.loc[self.student_headings[self.student_headings.columns[0]] == self.txt_search.get(
+                df_filtered = self.student_headings.loc[self.student_headings[self.student_headings.columns[3]] == self.txt_search.get(
                 )]
 
                 df_rows = df_filtered.to_numpy().tolist()
                 self.Student_Table.delete(*self.Student_Table.get_children())
                 for i in df_rows:
                     self.Student_Table.insert(
-                        "", END, values=(i[0], i[1], i[2]))
+                        "", END, values=(i[0], i[1], i[2],i[3]))
             except Exception as es:
                 messagebox.showerror(
                     "Error", f"Error due to: {str(es)}", parent=self.root)

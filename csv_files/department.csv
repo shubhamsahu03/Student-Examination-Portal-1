@@ -1,3 +1,3 @@
 Department ID,Department Name,Batches
-CSE,Computer Science and Engineering,CSE22 CSE21
-ECE,Electronics and Communication Engineering,ECE22 
+CSE,Computer Science,"['CSE13', 'CSE14', 'CSE15', 'CSE16', 'CSE17', 'CSE18', 'CSE19', 'CSE20', 'CSE21']"
+ME,Mechanical Engineering,"['ME13', 'ME14', 'ME15', 'ME16', 'ME17', 'ME18', 'ME19', 'ME20', 'ME21']"

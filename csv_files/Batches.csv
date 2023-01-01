@@ -1,1 +1,10 @@
 Batch ID,Batch Name,Department Name,List of Courses,List of Students
+CSE13,CSE 2013-17,CSE,"['COO1', 'COO2', 'COO3', 'COO4', 'COO5']",[]
+CSE14,CSE 2014-18,CSE,"['COO1', 'COO2', 'COO3', 'COO4', 'COO5']",[]
+CSE15,CSE 2015-19,CSE,"['COO1', 'COO2', 'COO3', 'COO4', 'COO5']",[]
+CSE16,CSE 2016-20,CSE,"['COO1', 'COO2', 'COO3', 'COO4', 'COO5']",[]
+CSE17,CSE 2017-21,CSE,"['COO1', 'COO2', 'COO3', 'COO4', 'COO5']",[]
+CSE18,CSE 2018-22,CSE,"['COO1', 'COO2', 'COO3', 'COO4', 'COO5']",[]
+CSE19,CSE 2019-23,CSE,"['COO1', 'COO2', 'COO3', 'COO4', 'COO5']",[]
+CSE20,CSE 2020-24,CSE,"['COO1', 'COO2', 'COO3', 'COO4', 'COO5']",[]
+CSE21,CSE 2021-25,CSE,"['COO1', 'COO2', 'COO3', 'COO4', 'COO5']",[]
