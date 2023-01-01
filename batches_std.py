@@ -214,6 +214,7 @@ class Batches:
         self.entry_name_var.set("")
         self.course_var.set("")
         self.listbox.delete(0, END)
+        self.text_std.delete("1.0", "end")
 
     def get_cursor(self, ev):
         cursor_row = self.Batch_Table.focus()
