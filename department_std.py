@@ -4,6 +4,9 @@ from PIL import Image, ImageTk
 import pandas as pd
 import csv
 import ast
+import matplotlib.pyplot as plt
+import seaborn as plt
+from pandas_tut import *
 
 
 def main():
@@ -53,7 +56,7 @@ class Department:
         self.depart_id_txt_var = StringVar()
         self.depart_name_txt_var = StringVar()
         self.batches_add_txt_var = StringVar()
-        self.avg_batchesvar = StringVar()
+
         self.txt_search = StringVar()
 
         self.depart_id_txt = Entry(self.frame1, font=(
@@ -87,19 +90,15 @@ class Department:
         self.search_image = ImageTk.PhotoImage(ImageTk.Image.open(
             "pictures_1/search_icon_2.jpg").resize((40, 40), ImageTk.Image.ANTIALIAS))
 
-        self.average_batches = Label(self.frame2, textvariable=self.avg_batchesvar, background="white", font=(
-            "times new roman", 10, "bold"), text="hello").grid(row=1, column=1, columnspan=2)
-        self.avg_batchesvar.set(
-            "Average Performance of Batches: {}".format(str(69)+"%"))
-        self.plot_graph_btn = Button(self.frame2, text="Plot Graph", activeforeground="green").grid(
+        self.plot_graph_btn = Button(self.frame2, command=lambda: self.create_lineplot(self.depart_id_txt_var.get()), text="Plot Graph", activeforeground="green").grid(
             row=2, column=2, ipadx=20, pady=20, padx=10)
         self.entry_search = Entry(self.frame2, textvariable=self.txt_search, relief=GROOVE, bg="white", borderwidth=1, font=(
             "times new roman", 17, "bold"), bd=3).grid(row=3, column=2)
         self.btn_search = Button(
-            self.frame2, image=self.search_image, borderwidth=1, relief=GROOVE, bg="white",command=self.search_data)
+            self.frame2, image=self.search_image, borderwidth=1, relief=GROOVE, bg="white", command=self.search_data)
         self.btn_search.place(x=0, y=125)
         self.show_allbtn = Button(self.frame2, text="Show All", width=10, height=2, pady=3, bg="OrangeRed3", font=(
-            "times new roman", 10, "bold"),command=self.fetch_data).place(x=50, y=125)
+            "times new roman", 10, "bold"), command=self.fetch_data).place(x=50, y=125)
     # ==================Treeview=============================
         scroll_x = ttk.Scrollbar(self.frame3, orient=HORIZONTAL)
         scroll_y = ttk.Scrollbar(self.frame3, orient=VERTICAL)
@@ -127,8 +126,8 @@ class Department:
         self.Depart_Table.pack(fill=BOTH, expand=1)
         self.Depart_Table["displaycolumns"] = list(
             self.department_headings.columns)
-        self.Depart_Table.bind("<ButtonRelease-1>",self.get_cursor)    
-        self.fetch_data()    
+        self.Depart_Table.bind("<ButtonRelease-1>", self.get_cursor)
+        self.fetch_data()
         self.depart_id_txt_var.trace("w", self.upd)
 
         # ==================Toplevel_windows=====================
@@ -140,7 +139,7 @@ class Department:
             if self.batches_add_txt_var.get() not in self.listbox.get(0, END):
 
                 self.listbox.insert(END, self.batches_add_txt_var.get())
-                print(self.listbox.get(0,END),type(self.listbox.get(0,END)))
+                print(self.listbox.get(0, END), type(self.listbox.get(0, END)))
                 self.batches_add_txt_var.set("")
             else:
                 self.batches_add_txt_var.set("")
@@ -172,6 +171,46 @@ class Department:
                 messagebox.showerror(
                     "Error", f"Error due to: {str(es)}", parent=self.root)
 
+    def create_lineplot(self, deptid):
+        batch_lst = get_lst_of_batches(deptid)
+
+        batch_average = []
+        for batch in batch_lst:
+            df = pd.read_csv("csv_files\exam.csv")
+            dictionary = {}
+            sliced_df = df[df[df.columns[1]].str[:len(batch)] == batch]
+
+            crse_lst = get_lst_of_courses(batch)
+            a = []
+            for i in [i[1] for i in sliced_df.to_numpy().tolist()]:
+                for j in crse_lst:
+
+                    b = get_marks(j, i)
+
+                    if b != []:
+                        a.append(b)
+
+            for item in a:
+                key = item[0]
+                value = item[1]
+                if key in dictionary:
+                    dictionary[key].append(value)
+                else:
+                    dictionary[key] = [value]
+
+            # print(get_average(get_list_of_pct(dictionary)))
+            batch_average.append(get_average(get_list_of_pct(dictionary)))
+
+        sns.lineplot(x=batch_lst, y=batch_average, linestyle='--')
+
+        # Add a title and axis labels
+        plt.title('Average Percentage of All Batches')
+        plt.xlabel('Batch List')
+        plt.ylabel('Average Percentage')
+
+        # Show the plot
+        plt.show()
+
     def update_crud(self):
         if self.depart_name_txt_var.get() == "" or self.depart_id_txt_var.get() == "" or list(self.listbox.get(0, END)) == []:
 
@@ -185,6 +224,8 @@ class Department:
                     if self.df.loc[i, self.department_headings.columns[0]] == self.depart_id_txt_var.get():
                         self.df.loc[i, self.department_headings.columns[1]
                                     ] = self.depart_name_txt_var.get()
+                        self.df.loc[i, self.department_headings.columns[2]] = list(
+                            self.listbox.get(0, END))
                         self.df.to_csv(excel_filename, index=False)
                         self.clear_crud()
                         self.fetch_data()
@@ -192,51 +233,54 @@ class Department:
             except Exception as es:
                 messagebox.showerror(
                     "Error", f"Error due to: {str(es)}", parent=self.root)
+
     def fetch_data(self):
         excel_filename = r"csv_files\department.csv"
         if excel_filename:
             try:
-                df=pd.read_csv(excel_filename)
+                df = pd.read_csv(excel_filename)
 
             except Exception as es:
                 messagebox.showerror(
-                        "Error", f"Error due to: {str(es)}", parent=self.root)
+                    "Error", f"Error due to: {str(es)}", parent=self.root)
         self.Depart_Table.delete(*self.Depart_Table.get_children())
-        
-        df_rows=df.to_numpy().tolist()
+
+        df_rows = df.to_numpy().tolist()
         for row in df_rows:
-            self.Depart_Table.insert("",END,values=row) 
-    def get_cursor(self,ev):
-        cursor_row=self.Depart_Table.focus()
-        content=self.Depart_Table.item(cursor_row)
-        self.Entry_fill=content["values"]
+            self.Depart_Table.insert("", END, values=row)
+
+    def get_cursor(self, ev):
+        cursor_row = self.Depart_Table.focus()
+        content = self.Depart_Table.item(cursor_row)
+        self.Entry_fill = content["values"]
         self.depart_id_txt_var.set(self.Entry_fill[0])
         self.depart_name_txt_var.set(self.Entry_fill[1])
         self.listbox.delete(0, END)
 
-        
-        a=ast.literal_eval(self.Entry_fill[2])
+        a = ast.literal_eval(self.Entry_fill[2])
         for i in a:
-            self.listbox.insert(END,i)
-        
-        #for i in range(len(list(self.Entry_fill[2]))):
-        #    self.listbox.insert(END,) 
+            self.listbox.insert(END, i)
+
+        # for i in range(len(list(self.Entry_fill[2]))):
+        #    self.listbox.insert(END,)
     def search_data(self):
-        if  self.txt_search.get()=="":
-            messagebox.showerror("Error","Entry box shouldn't be empty.",parent=self.root)
+        if self.txt_search.get() == "":
+            messagebox.showerror(
+                "Error", "Entry box shouldn't be empty.", parent=self.root)
         else:
             try:
-                df_filtered=self.department_headings.loc[self.department_headings[self.department_headings.columns[0]]==self.txt_search.get()]
-                """if df_filtered==None:
-                    messagebox.showerror("Error","Not Found.",parent=self.root)
-                else:"""
-                df_rows=df_filtered.to_numpy().tolist()
+                df_filtered = self.department_headings.loc[self.department_headings[
+                    self.department_headings.columns[0]] == self.txt_search.get()]
+
+                df_rows = df_filtered.to_numpy().tolist()
                 self.Depart_Table.delete(*self.Depart_Table.get_children())
                 for i in df_rows:
-                    self.Depart_Table.insert("",END,values=(i[0],i[1],i[2])) 
+                    self.Depart_Table.insert(
+                        "", END, values=(i[0], i[1], i[2]))
             except Exception as es:
-                    messagebox.showerror(
-                        "Error", f"Error due to: {str(es)}", parent=self.root)        
+                messagebox.showerror(
+                    "Error", f"Error due to: {str(es)}", parent=self.root)
+
     def crud_add(self):
 
         if self.depart_name_txt_var.get() == "" or self.depart_id_txt_var.get() == "" or list(self.listbox.get(0, END)) == []:
