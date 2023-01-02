@@ -241,7 +241,7 @@ class Batches:
         studentID = []
         marks = []
 
-        for item in filtered_rows.to_numpy().tolist():
+        for item in filtered_rows.to_numpy().tolist():#[["stdid","percentage"],["C",]]
             studentID.append(item[0])
             marks.append(item[1])
 

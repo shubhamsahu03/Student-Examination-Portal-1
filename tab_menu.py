@@ -47,7 +47,7 @@ class TabMenu:
 
         if self.batch_window is None or not self.batch_window.winfo_exists():
             self.batch_window = Toplevel(self.root)
-            from batches_std import Batches
+            from batch import Batches
             self.batches = Batches(self.batch_window)
         else:
             self.batch_window.focus_force()
@@ -56,7 +56,7 @@ class TabMenu:
 
         if self.student_window is None or not self.student_window.winfo_exists():
             self.student_window = Toplevel(self.root)
-            from students_std import Student
+            from student import Student
             self.batches = Student(self.student_window)
         else:
             self.student_window.focus_force()
@@ -65,7 +65,7 @@ class TabMenu:
 
         if self.exam_window is None or not self.exam_window.winfo_exists():
             self.exam_window = Toplevel(self.root)
-            from examinations_std import Exam
+            from examination import Exam
             self.exam_ = Exam(self.exam_window)
         else:
             self.exam_window.focus_force()
@@ -74,7 +74,7 @@ class TabMenu:
 
         if self.course_window is None or not self.course_window.winfo_exists():
             self.course_window = Toplevel(self.root)
-            from course_std import Course
+            from course import Course
             self.courses = Course(self.course_window)
         else:
             self.course_window.focus_force()
@@ -83,7 +83,7 @@ class TabMenu:
 
         if self.dpt_window is None or not self.dpt_window.winfo_exists():
             self.dpt_window = Toplevel(self.root)
-            from department_std import Department
+            from department import Department
             self.dpt = Department(self.dpt_window)
         else:
             self.dpt_window.focus_force()
